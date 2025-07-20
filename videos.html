@@ -343,7 +343,7 @@
       slide.innerHTML = `
         <div class="video-wrapper" style="position:relative;">
           <video class="blur-bg" src="${vid.src}" muted autoplay loop playsinline></video>
-          <video class="main-video" src="${vid.src}" poster="${vid.poster}" muted></video>
+          <video class="main-video" src="${vid.src}" poster="${vid.poster}"></video>
           <button class="play-btn" id="playBtn${i}" onclick="playInSlider(${i})" aria-label="Play video">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
               <circle cx="18" cy="18" r="18" fill="rgba(215,38,96,0.95)" />
@@ -407,7 +407,6 @@
       mainVideo.controls = true;
       mainVideo.muted = false;
       mainVideo.play();
-      playBtn.style.display = 'none';
 
       // Show play button again when mouse moves over video and video is paused or ended
       slide.onmousemove = () => {
