@@ -339,154 +339,89 @@
     </div>
   </div>
   <script>
-    const videoData = [
-      {
-        src: "https://streamable.com/ymruag", // removed /e/ from URL
-        poster: "thumbnail/thumb1.jpg",
-        caption: "Moments of the Heart"
-      },
-      {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb2.jpg", caption: "Timeless Memories"},
-      {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb3.jpg", caption: "Whispers of Love"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb4.jpg", caption: "Cherished Glimpses"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb5.jpg", caption: "In Every Beat"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb6.jpg", caption: "Unspoken Feelings"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb7.jpg", caption: "Fragments of Us"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb8.jpg", caption: "Held Close"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb9.jpg", caption: "Woven Together"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb10.jpg", caption: "Forever Begins Here"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb11.jpg", caption: "Endless Affection"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb12.jpg", caption: "The Way You Looked"},
-      {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb13.jpg", caption: "Every Second with You"}
+const videoData = [
+  {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb1.jpg", caption: "Moments of the Heart"},
+  {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb2.jpg", caption: "Timeless Memories"},
+  {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb3.jpg", caption: "Whispers of Love"},
+  // Add more videos here
+];
 
-    ];
+const slider = document.getElementById('featuredSlider');
+let slides = [];
+let currentSlide = 0;
 
-    const slider = document.getElementById('featuredSlider');
-    videoData.forEach((vid, i) => {
-      const slide = document.createElement('div');
-      slide.className = 'featured-slide' + (i === 0 ? ' active' : '');
-      slide.innerHTML = `
-        <div class="video-wrapper" style="position:relative;">
-          <video class="blur-bg" src="${vid.src}" muted autoplay loop playsinline></video>
-          <video class="main-video" src="${vid.src}" poster="${vid.poster}"></video>
-          <button class="play-btn" id="playBtn${i}" onclick="playInSlider(${i})" aria-label="Play video">
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <circle cx="18" cy="18" r="18" fill="rgba(215,38,96,0.95)" />
-              <polygon points="14,11 27,18 14,25" fill="#fff"/>
-            </svg>
-          </button>
-          <div class="featured-caption">${vid.caption}</div>
-        </div>
-      `;
-      slider.insertBefore(slide, slider.querySelector('.slider-nav'));
-    });
+// Create slides
+videoData.forEach((vid, i) => {
+  const slide = document.createElement('div');
+  slide.className = 'featured-slide' + (i === 0 ? ' active' : '');
+  slide.innerHTML = `
+    <div class="video-wrapper" style="position:relative;">
+      <img src="${vid.poster}" alt="${vid.caption}" style="width:100%;height:400px;object-fit:cover;border-radius:12px;">
+      <button class="play-btn" onclick="playVideo('${vid.src}')" aria-label="Play video" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:none;border:none;cursor:pointer;">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="40" fill="rgba(215,38,96,0.9)" />
+          <polygon points="32,25 32,55 55,40" fill="#fff"/>
+        </svg>
+      </button>
+      <div class="featured-caption" style="position:absolute;bottom:20px;left:20px;color:#fff;font-size:1.3em;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.7);">${vid.caption}</div>
+    </div>
+  `;
+  slider.appendChild(slide);
+  slides.push(slide);
+});
 
-    const selection = document.getElementById('videoSelection');
-    videoData.forEach((vid, i) => {
-      const item = document.createElement('div');
-      item.className = 'video-thumb-select';
-      item.innerHTML = `
-        <div style="display:flex;align-items:center;gap:12px;">
-          <img src="${vid.poster}" alt="Thumbnail ${i+1}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;background:#eee;">
-          <span>${vid.caption}</span>
-        </div>
-      `;
-      item.onclick = () => showSlide(i);
-      selection.appendChild(item);
-    });
+// Play video function
+function playVideo(src) {
+  const modal = document.getElementById('videoModal');
+  const videoContainer = document.getElementById('modalVideo');
+  const videoId = src.split('/').pop();
+  
+  videoContainer.innerHTML = `
+    <iframe 
+      src="https://streamable.com/e/${videoId}?autoplay=1" 
+      width="100%" 
+      height="100%" 
+      frameborder="0" 
+      allowfullscreen 
+      allow="autoplay"
+      style="position:absolute;top:0;left:0;width:100%;height:100%;">
+    </iframe>
+  `;
+  
+  modal.style.display = "flex";
+}
 
-    function updateSidebarActive(idx) {
-      document.querySelectorAll('.video-thumb-select').forEach((el, i) => {
-        el.classList.toggle('active', i === idx);
-      });
-    }
+// Close modal function
+function closeVideoModal() {
+  const modal = document.getElementById('videoModal');
+  const videoContainer = document.getElementById('modalVideo');
+  videoContainer.innerHTML = '';
+  modal.style.display = "none";
+}
 
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.featured-slide');
-    function showSlide(idx) {
-      slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === idx);
-        const mainVideo = slide.querySelector('.main-video');
-        if (i === idx) {
-          mainVideo.controls = true;
-          mainVideo.muted = false;
-          mainVideo.currentTime = 0;
-          setTimeout(() => {
-            mainVideo.play();
-          }, 100); // slight delay for browser to render
-        } else {
-          mainVideo.pause();
-          mainVideo.currentTime = 0;
-          mainVideo.controls = false;
-          mainVideo.muted = true;
-        }
-      });
-      currentSlide = idx;
-      updateSidebarActive(idx);
-    }
-    function prevSlide() {
-      showSlide((currentSlide - 1 + slides.length) % slides.length);
-    }
-    function nextSlide() {
-      showSlide((currentSlide + 1) % slides.length);
-    }
+// Generate sidebar
+const selection = document.getElementById('videoSelection');
+videoData.forEach((vid, i) => {
+  const item = document.createElement('div');
+  item.className = 'video-thumb-select';
+  item.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;cursor:pointer;border-radius:8px;margin-bottom:8px;';
+  item.innerHTML = `
+    <img src="${vid.poster}" alt="Thumbnail" style="width:50px;height:50px;border-radius:8px;object-fit:cover;">
+    <span style="color:#333;font-weight:500;">${vid.caption}</span>
+  `;
+  item.onclick = () => {
+    showSlide(i);
+    playVideo(vid.src);
+  };
+  selection.appendChild(item);
+});
 
-    function playInSlider(idx) {
-      showSlide(idx);
-      const slide = slides[idx];
-      const mainVideo = slide.querySelector('.main-video');
-      const playBtn = slide.querySelector('.play-btn');
-      mainVideo.controls = true;
-      mainVideo.muted = false;
-      setTimeout(() => {
-        mainVideo.play();
-      }, 100);
-      playBtn.style.display = 'none';
-
-      mainVideo.onplay = () => {
-        playBtn.style.display = 'none';
-      };
-      mainVideo.onpause = mainVideo.onended = () => {
-        playBtn.style.display = 'flex';
-      };
-      slide.onmousemove = () => {
-        if (mainVideo.paused || mainVideo.ended) {
-          playBtn.style.display = 'flex';
-        }
-      };
-    }
-
-    updateSidebarActive(0);
-
-    function playVideo(src) {
-      const modal = document.getElementById('videoModal');
-      const videoContainer = document.getElementById('modalVideo');
-      const videoId = src.split('/').pop(); // Get video ID from URL
-      
-      videoContainer.innerHTML = `
-        <iframe 
-          src="https://streamable.com/e/${videoId}?autoplay=1" 
-          width="100%" 
-          height="100%" 
-          frameborder="0" 
-          allowfullscreen 
-          style="position:absolute;top:0;left:0;width:100%;height:100%;">
-        </iframe>
-      `;
-      
-      modal.style.display = "flex";
-    }
-    function closeVideoModal() {
-      const modal = document.getElementById('videoModal');
-      const videoContainer = document.getElementById('modalVideo');
-      videoContainer.innerHTML = ''; // Remove iframe
-      modal.style.display = "none";
-    }
-    window.onclick = function(event) {
-      var modal = document.getElementById('videoModal');
-      if (event.target == modal) {
-        closeVideoModal();
-      }
-    }
+function showSlide(idx) {
+  slides.forEach((slide, i) => {
+    slide.classList.toggle('active', i === idx);
+  });
+  currentSlide = idx;
+}
   </script>
 </body>
 </html>
