@@ -333,14 +333,20 @@
   <div id="videoModal" class="video-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;justify-content:center;align-items:center;background:rgba(0,0,0,0.7);z-index:999;">
     <div class="video-modal-content" style="background:#fff;border-radius:12px;max-width:700px;width:90vw;position:relative;padding:24px;">
       <span class="close-modal" onclick="closeVideoModal()" style="position:absolute;top:12px;right:18px;font-size:2em;cursor:pointer;">&times;</span>
-      <video id="modalVideo" controls autoplay style="width:100%;border-radius:8px;"></video>
+      <div id="modalVideo" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+        <!-- iframe will be inserted here -->
+      </div>
     </div>
   </div>
   <script>
     const videoData = [
-      {src: "https://streamable.com/e/ymruag", poster: "thumbnail/thumb1.jpg", caption: "Moments of the Heart"},
-      {src: "https://streamable.com/e/ymruag", poster: "thumbnail/thumb2.jpg", caption: "Timeless Memories"},
-      {src: "https://streamable.com/e/ymruag", poster: "thumbnail/thumb3.jpg", caption: "Whispers of Love"},
+      {
+        src: "https://streamable.com/ymruag", // removed /e/ from URL
+        poster: "thumbnail/thumb1.jpg",
+        caption: "Moments of the Heart"
+      },
+      {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb2.jpg", caption: "Timeless Memories"},
+      {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb3.jpg", caption: "Whispers of Love"},
       {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb4.jpg", caption: "Cherished Glimpses"},
       {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb5.jpg", caption: "In Every Beat"},
       {src: "https://drive.google.com/uc?export=download&id=1h3yX-xz-NAeOf2QAbiKvDzF9nntshbef", poster: "thumbnail/thumb6.jpg", caption: "Unspoken Feelings"},
@@ -452,17 +458,27 @@
     updateSidebarActive(0);
 
     function playVideo(src) {
-      var modal = document.getElementById('videoModal');
-      var video = document.getElementById('modalVideo');
-      video.src = src;
+      const modal = document.getElementById('videoModal');
+      const videoContainer = document.getElementById('modalVideo');
+      const videoId = src.split('/').pop(); // Get video ID from URL
+      
+      videoContainer.innerHTML = `
+        <iframe 
+          src="https://streamable.com/e/${videoId}?autoplay=1" 
+          width="100%" 
+          height="100%" 
+          frameborder="0" 
+          allowfullscreen 
+          style="position:absolute;top:0;left:0;width:100%;height:100%;">
+        </iframe>
+      `;
+      
       modal.style.display = "flex";
-      video.play();
     }
     function closeVideoModal() {
-      var modal = document.getElementById('videoModal');
-      var video = document.getElementById('modalVideo');
-      video.pause();
-      video.src = "";
+      const modal = document.getElementById('videoModal');
+      const videoContainer = document.getElementById('modalVideo');
+      videoContainer.innerHTML = ''; // Remove iframe
       modal.style.display = "none";
     }
     window.onclick = function(event) {
