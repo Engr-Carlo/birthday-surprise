@@ -7,298 +7,227 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <style>
-    *:focus {
-  outline: none !important;
-}
-
     body {
-      background: #f5f6fa;
+      background: linear-gradient(135deg, #f5f6fa 0%, #ffe6f0 100%);
       font-family: 'Segoe UI', Arial, sans-serif;
       margin: 0;
       padding: 0;
+      min-height: 100vh;
     }
-    .main-layout {
-      display: flex;
-      max-width: 1300px;
+    
+    .video-container {
+      max-width: 1200px;
       margin: 0 auto;
-      gap: 32px;
-      padding: 32px 0;
+      padding: 40px 20px;
     }
-    .content-area {
-      flex: 3;
-    }
-    .sidebar {
-      flex: 1;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(60,60,60,0.08);
-      padding: 24px 18px;
-      min-width: 260px;
-      max-width: 320px;
-      height: 500px;
-      overflow-y: auto;
-    }
-    .featured-slider {
-      position: relative;
-      width: 100%;
-      max-width: 700px;
-      height: 400px;
-      margin: 0 auto 32px auto;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 8px 32px rgba(60,60,60,0.12);
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .featured-slide {
-      display: none;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      left: 0; top: 0;
-      transition: opacity 0.5s;
-    }
-    .featured-slide.active {
-      display: block;
-      position: relative;
-      opacity: 1;
-      z-index: 2;
-    }
-    .slider-nav {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      z-index: 5;
-      pointer-events: none;
-    }
-    .slider-btn {
-      background: rgba(0,0,0,0.4);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      font-size: 2em;
-      width: 48px;
-      height: 48px;
-      cursor: pointer;
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-    .slider-btn:hover {
-      background: #d72660;
-    }
-    .featured-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      padding: 18px;
-      font-size: 1.3em;
+    
+    .page-title {
+      text-align: center;
       font-family: 'Great Vibes', cursive;
-      z-index: 4;
+      font-size: 3em;
+      color: #d72660;
+      margin-bottom: 40px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     }
-    .videos-grid {
+    
+    .video-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 28px;
-      margin-top: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
     }
+    
     .video-card {
       background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(60,60,60,0.08);
-      padding: 0 0 12px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(215,38,96,0.15);
       overflow: hidden;
-      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 2px solid #ffd6e0;
     }
-    .video-thumb-wrapper {
+    
+    .video-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(215,38,96,0.25);
+    }
+    
+    .video-thumbnail {
+      position: relative;
       width: 100%;
-      aspect-ratio: 16/9;
-      background: #f7e7c1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
+      height: 200px;
+      overflow: hidden;
+      cursor: pointer;
     }
-    .video-thumb {
+    
+    .video-thumbnail img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: brightness(0.85) blur(1px);
-      pointer-events: none;
+      transition: transform 0.3s;
     }
-    .play-btn {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      z-index: 3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      transition: box-shadow 0.2s, transform 0.2s;
-      outline: none;
-      box-shadow: 0 4px 24px rgba(215,38,96,0.25);
+    
+    .video-thumbnail:hover img {
+      transform: scale(1.05);
     }
-    .play-btn:hover svg circle {
-      fill: #d72660;
-      filter: brightness(1.2);
-    }
-    .play-btn:focus {
-      outline: none !important;
-      box-shadow: none !important;
-      background: none !important;
-      border: none !important;
-    }
-    .play-btn:active {
-      outline: none !important;
-      box-shadow: none !important;
-      background: none !important;
-      border: none !important;
-    }
-    .play-btn svg {
-      display: block;
-      pointer-events: none;
-    }
-    .play-btn:active {
-      transform: translate(-50%, -50%) scale(0.95);
-    }
-    .video-caption {
-      font-family: 'Great Vibes', cursive;
-      color: #b23a48;
-      font-size: 1.1em;
-      text-align: center;
-      margin-top: 8px;
-    }
-    .sidebar-title {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-bottom: 16px;
-      color: #333;
-    }
-    .recent-posts {
-      margin-bottom: 32px;
-    }
-    .recent-post {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .recent-thumb {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
-      object-fit: cover;
-      background: #eee;
-    }
-    .recent-info {
-      font-size: 0.95em;
-      color: #444;
-    }
-    .social-links {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .social-link {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 1em;
-      color: #333;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .social-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #eee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2em;
-    }
-    @media (max-width: 900px) {
-      .main-layout {
-        flex-direction: column;
-        gap: 0;
-      }
-      .sidebar {
-        max-width: 100vw;
-        margin-top: 32px;
-      }
-      .featured-slider {
-        max-width: 100vw;
-      }
-      .videos-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    .video-selection {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 420px;
-      overflow-y: auto;
-    }
-    .video-thumb-select {
-      cursor: pointer;
-      padding: 10px 8px;
-      border-radius: 8px;
-      transition: background 0.2s;
-      font-size: 1em;
-      color: #444;
-    }
-    .video-thumb-select:hover,
-    .video-thumb-select.active {
-      background: #f5f6fa;
-      font-weight: bold;
-    }
-    .video-wrapper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000;
-    }
-    .video-wrapper video.main-video {
-      position: relative;
-      max-height: 100%;
-      max-width: 100%;
-      z-index: 2;
-      object-fit: contain;
-      background: #000;
-    }
-    .video-wrapper video.blur-bg {
+    
+    .play-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      filter: blur(24px) brightness(0.4);
-      z-index: 1;
-      pointer-events: none;
+      background: rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s;
+    }
+    
+    .play-btn {
+      width: 80px;
+      height: 80px;
+      background: rgba(215,38,96,0.9);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(215,38,96,0.4);
+    }
+    
+    .play-btn:hover {
+      background: #d72660;
+      transform: scale(1.1);
+      box-shadow: 0 6px 25px rgba(215,38,96,0.6);
+    }
+    
+    .play-icon {
+      width: 0;
+      height: 0;
+      border-left: 25px solid white;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      margin-left: 5px;
+    }
+    
+    .video-info {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .video-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.5em;
+      color: #d72660;
+      margin: 0;
+      font-weight: normal;
+    }
+    
+    .video-description {
+      color: #666;
+      margin-top: 8px;
+      font-size: 0.9em;
+    }
+    
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      animation: fadeIn 0.3s;
+    }
+    
+    .modal-content {
+      position: relative;
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 0;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      background: linear-gradient(90deg, #d72660, #ff6b9d);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .modal-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.8em;
+      margin: 0;
+    }
+    
+    .close {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+    
+    .close:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+    }
+    
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @media (max-width: 768px) {
+      .video-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .page-title {
+        font-size: 2.5em;
+      }
+      
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
     }
   </style>
 </head>
@@ -316,112 +245,199 @@
       </ul>
     </nav>
   </header>
-  <div class="main-layout">
-    <div class="content-area">
-      <div class="featured-slider" id="featuredSlider">
-        <div class="slider-nav">
-          <button class="slider-btn" onclick="prevSlide()">&#10094;</button>
-          <button class="slider-btn" onclick="nextSlide()">&#10095;</button>
-        </div>
-      </div>
-    </div>
-    <aside class="sidebar">
-      <div class="sidebar-title">Select a Video</div>
-      <div class="video-selection" id="videoSelection"></div>
-    </aside>
-  </div>
-  <div id="videoModal" class="video-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;justify-content:center;align-items:center;background:rgba(0,0,0,0.7);z-index:999;">
-    <div class="video-modal-content" style="background:#fff;border-radius:12px;max-width:700px;width:90vw;position:relative;padding:24px;">
-      <span class="close-modal" onclick="closeVideoModal()" style="position:absolute;top:12px;right:18px;font-size:2em;cursor:pointer;">&times;</span>
-      <div id="modalVideo" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
-        <!-- iframe will be inserted here -->
-      </div>
+
+  <div class="video-container">
+    <h1 class="page-title">Our Love Story Videos 💕</h1>
+    
+    <div class="video-grid" id="videoGrid">
+      <!-- Videos will be generated here -->
     </div>
   </div>
+
+  <!-- Video Modal -->
+  <div id="videoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">Our Special Moment</h2>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="video-wrapper" id="videoContainer">
+        <!-- Video iframe will be inserted here -->
+      </div>
+    </div>
+  </div>
+
   <script>
-const videoData = [
-  {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb1.jpg", caption: "Moments of the Heart"},
-  {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb2.jpg", caption: "Timeless Memories"},
-  {src: "https://streamable.com/ymruag", poster: "thumbnail/thumb3.jpg", caption: "Whispers of Love"},
-  // Add more videos here
+// Video data - using local files
+const videos = [
+  {
+    src: "videos/video1.mp4",
+    title: "Moments of the Heart",
+    description: "Our most precious memories together",
+    thumbnail: "thumbnail/thumb1.jpg"
+  },
+  {
+    src: "videos/video2.mp4",
+    title: "Timeless Memories", 
+    description: "Every second with you is magical",
+    thumbnail: "thumbnail/thumb2.jpg"
+  },
+  {
+    src: "videos/video3.mp4",
+    title: "Whispers of Love",
+    description: "The soundtrack of our love story",
+    thumbnail: "thumbnail/thumb3.jpg"
+  },
+  {
+    src: "videos/video4.mp4",
+    title: "Cherished Glimpses",
+    description: "Beautiful moments we've shared",
+    thumbnail: "thumbnail/thumb4.jpg"
+  },
+  {
+    src: "videos/video5.mp4",
+    title: "In Every Beat",
+    description: "My heart beats for you",
+    thumbnail: "thumbnail/thumb5.jpg"
+  },
+  {
+    src: "videos/video6.mp4",
+    title: "Unspoken Feelings",
+    description: "Words can't express my love",
+    thumbnail: "thumbnail/thumb6.jpg"
+  },
+  {
+    src: "videos/video7.mp4",
+    title: "Fragments of Us",
+    description: "Pieces of our perfect puzzle",
+    thumbnail: "thumbnail/thumb7.jpg"
+  },
+  {
+    src: "videos/video8.mp4",
+    title: "Held Close",
+    description: "Forever in my embrace",
+    thumbnail: "thumbnail/thumb8.jpg"
+  },
+  {
+    src: "videos/video9.mp4",
+    title: "Woven Together",
+    description: "Our lives intertwined",
+    thumbnail: "thumbnail/thumb9.jpg"
+  },
+  {
+    src: "videos/video10.mp4",
+    title: "Sweet Serenades",
+    description: "Love songs just for you",
+    thumbnail: "thumbnail/thumb10.jpg"
+  },
+  {
+    src: "videos/video11.mp4",
+    title: "Dancing Hearts",
+    description: "Moving to love's rhythm",
+    thumbnail: "thumbnail/thumb11.jpg"
+  },
+  {
+    src: "videos/video12.mp4",
+    title: "Endless Dreams",
+    description: "Dreaming of our future",
+    thumbnail: "thumbnail/thumb12.jpg"
+  },
+  {
+    src: "videos/video13.mp4",
+    title: "Forever Yours",
+    description: "Until the end of time",
+    thumbnail: "thumbnail/thumb13.jpg"
+  }
 ];
 
-const slider = document.getElementById('featuredSlider');
-let slides = [];
-let currentSlide = 0;
-
-// Create slides
-videoData.forEach((vid, i) => {
-  const slide = document.createElement('div');
-  slide.className = 'featured-slide' + (i === 0 ? ' active' : '');
-  slide.innerHTML = `
-    <div class="video-wrapper" style="position:relative;">
-      <img src="${vid.poster}" alt="${vid.caption}" style="width:100%;height:400px;object-fit:cover;border-radius:12px;">
-      <button class="play-btn" onclick="playVideo('${vid.src}')" aria-label="Play video" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:none;border:none;cursor:pointer;">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-          <circle cx="40" cy="40" r="40" fill="rgba(215,38,96,0.9)" />
-          <polygon points="32,25 32,55 55,40" fill="#fff"/>
-        </svg>
-      </button>
-      <div class="featured-caption" style="position:absolute;bottom:20px;left:20px;color:#fff;font-size:1.3em;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.7);">${vid.caption}</div>
-    </div>
-  `;
-  slider.appendChild(slide);
-  slides.push(slide);
-});
-
-// Play video function
-function playVideo(src) {
-  const modal = document.getElementById('videoModal');
-  const videoContainer = document.getElementById('modalVideo');
-  const videoId = src.split('/').pop();
+// Generate video grid
+function generateVideoGrid() {
+  const grid = document.getElementById('videoGrid');
   
-  videoContainer.innerHTML = `
-    <iframe 
-      src="https://streamable.com/e/${videoId}?autoplay=1" 
-      width="100%" 
-      height="100%" 
-      frameborder="0" 
-      allowfullscreen 
-      allow="autoplay"
-      style="position:absolute;top:0;left:0;width:100%;height:100%;">
-    </iframe>
-  `;
-  
-  modal.style.display = "flex";
-}
-
-// Close modal function
-function closeVideoModal() {
-  const modal = document.getElementById('videoModal');
-  const videoContainer = document.getElementById('modalVideo');
-  videoContainer.innerHTML = '';
-  modal.style.display = "none";
-}
-
-// Generate sidebar
-const selection = document.getElementById('videoSelection');
-videoData.forEach((vid, i) => {
-  const item = document.createElement('div');
-  item.className = 'video-thumb-select';
-  item.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;cursor:pointer;border-radius:8px;margin-bottom:8px;';
-  item.innerHTML = `
-    <img src="${vid.poster}" alt="Thumbnail" style="width:50px;height:50px;border-radius:8px;object-fit:cover;">
-    <span style="color:#333;font-weight:500;">${vid.caption}</span>
-  `;
-  item.onclick = () => {
-    showSlide(i);
-    playVideo(vid.src);
-  };
-  selection.appendChild(item);
-});
-
-function showSlide(idx) {
-  slides.forEach((slide, i) => {
-    slide.classList.toggle('active', i === idx);
+  videos.forEach((video, index) => {
+    const videoCard = document.createElement('div');
+    videoCard.className = 'video-card';
+    videoCard.innerHTML = `
+      <div class="video-thumbnail" onclick="openVideo('${video.src}', '${video.title}')">
+        <img src="${video.thumbnail}" alt="${video.title}" />
+        <div class="play-overlay">
+          <button class="play-btn">
+            <div class="play-icon"></div>
+          </button>
+        </div>
+      </div>
+      <div class="video-info">
+        <h3 class="video-title">${video.title}</h3>
+        <p class="video-description">${video.description}</p>
+      </div>
+    `;
+    grid.appendChild(videoCard);
   });
-  currentSlide = idx;
 }
+
+// Open video in modal
+function openVideo(videoSrc, title) {
+  const modal = document.getElementById('videoModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const videoContainer = document.getElementById('videoContainer');
+  
+  // Set title
+  modalTitle.textContent = title;
+  
+  // Create video element for local files
+  videoContainer.innerHTML = `
+    <video 
+      controls 
+      autoplay 
+      style="width: 100%; height: 100%;"
+      preload="metadata">
+      <source src="${videoSrc}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  `;
+  
+  // Show modal
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+// Close modal
+function closeModal() {
+  const modal = document.getElementById('videoModal');
+  const videoContainer = document.getElementById('videoContainer');
+  
+  // Stop video and clear container
+  const video = videoContainer.querySelector('video');
+  if (video) {
+    video.pause();
+    video.currentTime = 0;
+  }
+  videoContainer.innerHTML = '';
+  
+  // Hide modal
+  modal.style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+  const modal = document.getElementById('videoModal');
+  if (event.target === modal) {
+    closeModal();
+  }
+}
+
+// Close modal with escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeModal();
+  }
+});
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+  generateVideoGrid();
+});
   </script>
 </body>
 </html>
