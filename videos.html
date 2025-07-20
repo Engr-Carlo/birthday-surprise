@@ -148,14 +148,20 @@
       justify-content: center;
       padding: 0;
       transition: box-shadow 0.2s, transform 0.2s;
+      outline: none;
       box-shadow: 0 4px 24px rgba(215,38,96,0.25);
     }
     .play-btn:hover svg circle {
       fill: #d72660;
       filter: brightness(1.2);
     }
+    .play-btn:focus {
+      outline: none;
+      background: none;
+    }
     .play-btn svg {
       display: block;
+      pointer-events: none;
     }
     .play-btn:active {
       transform: translate(-50%, -50%) scale(0.95);
