@@ -399,13 +399,20 @@
     function showSlide(idx) {
       slides.forEach((slide, i) => {
         slide.classList.toggle('active', i === idx);
-        const videos = slide.querySelectorAll('video');
-        videos.forEach(v => {
-          v.pause();
-          v.currentTime = 0;
-          v.controls = false;
-          v.muted = true;
-        });
+        const mainVideo = slide.querySelector('.main-video');
+        if (i === idx) {
+          mainVideo.controls = true;
+          mainVideo.muted = false;
+          mainVideo.currentTime = 0;
+          setTimeout(() => {
+            mainVideo.play();
+          }, 100); // slight delay for browser to render
+        } else {
+          mainVideo.pause();
+          mainVideo.currentTime = 0;
+          mainVideo.controls = false;
+          mainVideo.muted = true;
+        }
       });
       currentSlide = idx;
       updateSidebarActive(idx);
@@ -423,22 +430,18 @@
       const mainVideo = slide.querySelector('.main-video');
       const playBtn = slide.querySelector('.play-btn');
       mainVideo.controls = true;
-      mainVideo.muted = false; // Unmute on play
-      mainVideo.play().catch(() => {
-        // If autoplay fails, try muted
-        mainVideo.muted = true;
+      mainVideo.muted = false;
+      setTimeout(() => {
         mainVideo.play();
-      });
+      }, 100);
+      playBtn.style.display = 'none';
 
-      // Hide play button when playing
       mainVideo.onplay = () => {
         playBtn.style.display = 'none';
       };
-      // Show play button when paused or ended
       mainVideo.onpause = mainVideo.onended = () => {
         playBtn.style.display = 'flex';
       };
-      // Show play button again when mouse moves over video and video is paused or ended
       slide.onmousemove = () => {
         if (mainVideo.paused || mainVideo.ended) {
           playBtn.style.display = 'flex';
