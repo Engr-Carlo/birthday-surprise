@@ -423,15 +423,13 @@
       const mainVideo = slide.querySelector('.main-video');
       const playBtn = slide.querySelector('.play-btn');
       mainVideo.controls = true;
-      mainVideo.muted = false;
-      mainVideo.play();
+      mainVideo.muted = false; // Unmute on play
+      mainVideo.play().catch(() => {
+        // If autoplay fails, try muted
+        mainVideo.muted = true;
+        mainVideo.play();
+      });
 
-      // Show play button again when mouse moves over video and video is paused or ended
-      slide.onmousemove = () => {
-        if (mainVideo.paused || mainVideo.ended) {
-          playBtn.style.display = 'flex';
-        }
-      };
       // Hide play button when playing
       mainVideo.onplay = () => {
         playBtn.style.display = 'none';
@@ -439,6 +437,12 @@
       // Show play button when paused or ended
       mainVideo.onpause = mainVideo.onended = () => {
         playBtn.style.display = 'flex';
+      };
+      // Show play button again when mouse moves over video and video is paused or ended
+      slide.onmousemove = () => {
+        if (mainVideo.paused || mainVideo.ended) {
+          playBtn.style.display = 'flex';
+        }
       };
     }
 
