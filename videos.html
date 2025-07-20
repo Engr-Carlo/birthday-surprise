@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <style>
+    *:focus {
+  outline: none !important;
+}
+
     body {
       background: #f5f6fa;
       font-family: 'Segoe UI', Arial, sans-serif;
@@ -156,8 +160,16 @@
       filter: brightness(1.2);
     }
     .play-btn:focus {
-      outline: none;
-      background: none;
+      outline: none !important;
+      box-shadow: none !important;
+      background: none !important;
+      border: none !important;
+    }
+    .play-btn:active {
+      outline: none !important;
+      box-shadow: none !important;
+      background: none !important;
+      border: none !important;
     }
     .play-btn svg {
       display: block;
