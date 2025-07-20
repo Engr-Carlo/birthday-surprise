@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome Page</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="logo">HappyBirthday<span>MyLove</span> 💖</div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="welcome.html">Home</a></li>
+        <li><a href="our-story.html">Our Story</a></li>
+        <li><a href="memories.html">Memories</a></li>
+        <li><a href="love-song.html">Love Song</a></li>
+        <li><a href="videos.html">Videos</a></li>
+        <li><a href="message-me.html">Message Me</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>
+        Happy Birthday, <span>My Love</span>! 💖
+      </h1>
+      <p>
+        Every moment with you is a treasure. On your special day, I want you to know how deeply I love you and how grateful I am for your presence in my life.<br>
+        May your birthday be filled with laughter, joy, and all the love your heart can hold.<br>
+        <strong>You are my everything. I love you more with every sunrise. 💕</strong>
+      </p>
+      <div class="buttons">
+        <button class="btn-primary" id="foreverBtn">Forever Yours</button>
+        <button class="btn-outline" id="storyBtn">Read Our Story</button>
+      </div>
+    </div>
+
+    <div class="hero-image">
+      <img src="images/mylove.jpg" alt="My Love" />
+
+    </div>
+  </section>
+
+  <div class="floating-hearts"></div>
+
+  <script>
+    // Forever Yours: scatter 30 images as cards with smooth animation
+    document.getElementById('foreverBtn').onclick = function() {
+      // Remove previous scatter if any
+      document.querySelectorAll('.scattered-card').forEach(e => e.remove());
+
+      for(let i=1; i<=30; i++) {
+        const card = document.createElement('div');
+        card.className = 'scattered-card';
+        // Start from center, animate to random position
+        card.style.left = '50vw';
+        card.style.top = '50vh';
+        card.style.transform = `rotate(0deg) scale(0.7)`;
+        card.style.opacity = '0';
+
+        const img = document.createElement('img');
+        img.src = `photos/photo${i}.jpg`;
+        img.alt = `Memory ${i}`;
+        img.className = 'scattered-img';
+        card.appendChild(img);
+
+        document.body.appendChild(card);
+
+        // Animate to random position after a short delay
+        setTimeout(() => {
+          card.style.transition = 'all 1.2s cubic-bezier(.17,.67,.83,.67)';
+          card.style.left = Math.random() * 80 + 'vw';
+          card.style.top = Math.random() * 80 + 'vh';
+          card.style.transform = `rotate(${Math.random()*40-20}deg) scale(${0.9 + Math.random()*0.4})`;
+          card.style.opacity = '1';
+        }, 50 * i);
+      }
+
+      // Remove scattered cards after 2.5 seconds
+      setTimeout(() => {
+        document.querySelectorAll('.scattered-card').forEach(e => e.remove());
+      }, 15000);
+    };
+
+    // Smooth scroll to "Our Story" page
+    document.getElementById('storyBtn').onclick = function() {
+      window.location.href = "our-story.html";
+    };
+  </script>
+  <style>
+    .heart-burst {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      width: 0;
+      height: 0;
+    }
+    .burst-heart {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      background: transparent;
+      transform: scale(0.7);
+      opacity: 0.8;
+      animation: burst 1s cubic-bezier(.17,.67,.83,.67) forwards;
+    }
+    .burst-heart:before, .burst-heart:after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 0;
+      width: 14px;
+      height: 24px;
+      background: #d72660;
+      border-radius: 14px 14px 0 0;
+      transform: rotate(-45deg);
+    }
+    .burst-heart:after {
+      left: 0;
+      transform: rotate(45deg);
+    }
+    @keyframes burst {
+      0% { transform: scale(0.7) translateY(0); opacity: 0.8;}
+      60% { transform: scale(1.2) translateY(-60px); opacity: 1;}
+      100% { transform: scale(0.8) translateY(-120px); opacity: 0;}
+    }
+    .scattered-card {
+      position: fixed;
+      z-index: 9999;
+      width: 110px;
+      height: 110px;
+      pointer-events: none;
+      animation: scatter-in 1.2s cubic-bezier(.17,.67,.83,.67) forwards;
+      opacity: 0.95;
+    }
+    .scattered-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(215,38,96,0.18);
+      border: 2px solid #fff;
+    }
+    @keyframes scatter-in {
+      0% { opacity: 0; transform: scale(0.5) rotate(0deg);}
+      60% { opacity: 1; }
+      100% { opacity: 0.95;}
+    }
+  </style>
+</body>
+</html>

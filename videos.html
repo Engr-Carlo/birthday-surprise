@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Special Videos</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #f5f6fa;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .main-layout {
+      display: flex;
+      max-width: 1300px;
+      margin: 0 auto;
+      gap: 32px;
+      padding: 32px 0;
+    }
+    .content-area {
+      flex: 3;
+    }
+    .sidebar {
+      flex: 1;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(60,60,60,0.08);
+      padding: 24px 18px;
+      min-width: 260px;
+      max-width: 320px;
+      height: 500px;
+      overflow-y: auto;
+    }
+    .featured-slider {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      height: 400px;
+      margin: 0 auto 32px auto;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(60,60,60,0.12);
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .featured-slide {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0; top: 0;
+      transition: opacity 0.5s;
+    }
+    .featured-slide.active {
+      display: block;
+      position: relative;
+      opacity: 1;
+      z-index: 2;
+    }
+    .slider-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .slider-btn {
+      background: rgba(0,0,0,0.4);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 2em;
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .slider-btn:hover {
+      background: #d72660;
+    }
+    .featured-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      padding: 18px;
+      font-size: 1.3em;
+      font-family: 'Great Vibes', cursive;
+      z-index: 4;
+    }
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      margin-top: 24px;
+    }
+    .video-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(60,60,60,0.08);
+      padding: 0 0 12px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .video-thumb-wrapper {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #f7e7c1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .video-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.85) blur(1px);
+      pointer-events: none;
+    }
+    .play-btn {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: box-shadow 0.2s, transform 0.2s;
+      box-shadow: 0 4px 24px rgba(215,38,96,0.25);
+    }
+    .play-btn:hover svg circle {
+      fill: #d72660;
+      filter: brightness(1.2);
+    }
+    .play-btn svg {
+      display: block;
+    }
+    .play-btn:active {
+      transform: translate(-50%, -50%) scale(0.95);
+    }
+    .video-caption {
+      font-family: 'Great Vibes', cursive;
+      color: #b23a48;
+      font-size: 1.1em;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .sidebar-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 16px;
+      color: #333;
+    }
+    .recent-posts {
+      margin-bottom: 32px;
+    }
+    .recent-post {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .recent-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #eee;
+    }
+    .recent-info {
+      font-size: 0.95em;
+      color: #444;
+    }
+    .social-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1em;
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .social-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+    @media (max-width: 900px) {
+      .main-layout {
+        flex-direction: column;
+        gap: 0;
+      }
+      .sidebar {
+        max-width: 100vw;
+        margin-top: 32px;
+      }
+      .featured-slider {
+        max-width: 100vw;
+      }
+      .videos-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .video-selection {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    .video-thumb-select {
+      cursor: pointer;
+      padding: 10px 8px;
+      border-radius: 8px;
+      transition: background 0.2s;
+      font-size: 1em;
+      color: #444;
+    }
+    .video-thumb-select:hover,
+    .video-thumb-select.active {
+      background: #f5f6fa;
+      font-weight: bold;
+    }
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+    .video-wrapper video.main-video {
+      position: relative;
+      max-height: 100%;
+      max-width: 100%;
+      z-index: 2;
+      object-fit: contain;
+      background: #000;
+    }
+    .video-wrapper video.blur-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(24px) brightness(0.4);
+      z-index: 1;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">HappyBirthday<span>MyLove</span> 💖</div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="welcome.html">Home</a></li>
+        <li><a href="our-story.html">Our Story</a></li>
+        <li><a href="memories.html">Memories</a></li>
+        <li><a href="love-song.html">Love Song</a></li>
+        <li><a href="videos.html">Videos</a></li>
+        <li><a href="message-me.html">Message Me</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="main-layout">
+    <div class="content-area">
+      <div class="featured-slider" id="featuredSlider">
+        <div class="slider-nav">
+          <button class="slider-btn" onclick="prevSlide()">&#10094;</button>
+          <button class="slider-btn" onclick="nextSlide()">&#10095;</button>
+        </div>
+      </div>
+    </div>
+    <aside class="sidebar">
+      <div class="sidebar-title">Select a Video</div>
+      <div class="video-selection" id="videoSelection"></div>
+    </aside>
+  </div>
+  <div id="videoModal" class="video-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;justify-content:center;align-items:center;background:rgba(0,0,0,0.7);z-index:999;">
+    <div class="video-modal-content" style="background:#fff;border-radius:12px;max-width:700px;width:90vw;position:relative;padding:24px;">
+      <span class="close-modal" onclick="closeVideoModal()" style="position:absolute;top:12px;right:18px;font-size:2em;cursor:pointer;">&times;</span>
+      <video id="modalVideo" controls autoplay style="width:100%;border-radius:8px;"></video>
+    </div>
+  </div>
+  <script>
+    const videoData = [
+      {src: "https://drive.google.com/file/d/1gcyX3sAVNncUOQIvX422YxMX2K66lr1J/view?usp=sharing", poster: "images/mylove.jpg", caption: "Beautiful Nature & Landscapes"},
+      {src: "https://drive.google.com/file/d/1gcyX3sAVNncUOQIvX422YxMX2K66lr1J/view?usp=sharing", poster: "images/thumb2.jpg", caption: "Culture: Sweet Memories"},
+      {src: "https://drive.google.com/file/d/1gcyX3sAVNncUOQIvX422YxMX2K66lr1J/view?usp=sharing", poster: "images/thumb3.jpg", caption: "Sweet Surprises"},
+      {src: "https://drive.google.com/file/d/1gcyX3sAVNncUOQIvX422YxMX2K66lr1J/view?usp=sharing", poster: "images/thumb4.jpg", caption: "Birthday Wishes"},
+      {src: "videos/video5.mp4", poster: "images/thumb5.jpg", caption: "Video 5"},
+      {src: "videos/video6.mp4", poster: "images/thumb6.jpg", caption: "Video 6"},
+      {src: "videos/video7.mp4", poster: "images/thumb7.jpg", caption: "Video 7"},
+      {src: "videos/video8.mp4", poster: "images/thumb8.jpg", caption: "Video 8"},
+      {src: "videos/video9.mp4", poster: "images/thumb9.jpg", caption: "Video 9"},
+      {src: "videos/video10.mp4", poster: "images/thumb10.jpg", caption: "Video 10"},
+      {src: "videos/video11.mp4", poster: "images/thumb11.jpg", caption: "Video 11"},
+      {src: "videos/video12.mp4", poster: "images/thumb12.jpg", caption: "Video 12"},
+      {src: "videos/video13.mp4", poster: "images/thumb13.jpg", caption: "Video 13"}
+    ];
+
+    const slider = document.getElementById('featuredSlider');
+    videoData.forEach((vid, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'featured-slide' + (i === 0 ? ' active' : '');
+      slide.innerHTML = `
+        <div class="video-wrapper" style="position:relative;">
+          <video class="blur-bg" src="${vid.src}" muted autoplay loop playsinline></video>
+          <video class="main-video" src="${vid.src}" poster="${vid.poster}" muted></video>
+          <button class="play-btn" id="playBtn${i}" onclick="playInSlider(${i})" aria-label="Play video">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+              <circle cx="18" cy="18" r="18" fill="rgba(215,38,96,0.95)" />
+              <polygon points="14,11 27,18 14,25" fill="#fff"/>
+            </svg>
+          </button>
+          <div class="featured-caption">${vid.caption}</div>
+        </div>
+      `;
+      slider.insertBefore(slide, slider.querySelector('.slider-nav'));
+    });
+
+    const selection = document.getElementById('videoSelection');
+    videoData.forEach((vid, i) => {
+      const item = document.createElement('div');
+      item.className = 'video-thumb-select';
+      item.textContent = vid.caption;
+      item.onclick = () => showSlide(i);
+      selection.appendChild(item);
+    });
+
+    function updateSidebarActive(idx) {
+      document.querySelectorAll('.video-thumb-select').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+    }
+
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.featured-slide');
+    function showSlide(idx) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === idx);
+        const videos = slide.querySelectorAll('video');
+        videos.forEach(v => {
+          v.pause();
+          v.currentTime = 0;
+          v.controls = false;
+          v.muted = true;
+        });
+      });
+      currentSlide = idx;
+      updateSidebarActive(idx);
+    }
+    function prevSlide() {
+      showSlide((currentSlide - 1 + slides.length) % slides.length);
+    }
+    function nextSlide() {
+      showSlide((currentSlide + 1) % slides.length);
+    }
+
+    function playInSlider(idx) {
+      showSlide(idx);
+      const slide = slides[idx];
+      const mainVideo = slide.querySelector('.main-video');
+      const playBtn = slide.querySelector('.play-btn');
+      mainVideo.controls = true;
+      mainVideo.muted = false;
+      mainVideo.play();
+      playBtn.style.display = 'none';
+
+      // Show play button again when mouse moves over video and video is paused or ended
+      slide.onmousemove = () => {
+        if (mainVideo.paused || mainVideo.ended) {
+          playBtn.style.display = 'flex';
+        }
+      };
+      // Hide play button when playing
+      mainVideo.onplay = () => {
+        playBtn.style.display = 'none';
+      };
+      // Show play button when paused or ended
+      mainVideo.onpause = mainVideo.onended = () => {
+        playBtn.style.display = 'flex';
+      };
+    }
+
+    updateSidebarActive(0);
+
+    function playVideo(src) {
+      var modal = document.getElementById('videoModal');
+      var video = document.getElementById('modalVideo');
+      video.src = src;
+      modal.style.display = "flex";
+      video.play();
+    }
+    function closeVideoModal() {
+      var modal = document.getElementById('videoModal');
+      var video = document.getElementById('modalVideo');
+      video.pause();
+      video.src = "";
+      modal.style.display = "none";
+    }
+    window.onclick = function(event) {
+      var modal = document.getElementById('videoModal');
+      if (event.target == modal) {
+        closeVideoModal();
+      }
+    }
+  </script>
+</body>
+</html>

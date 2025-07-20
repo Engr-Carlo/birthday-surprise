@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View JSON</title>
+  <style>
+    body {
+      font-family: monospace;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    pre {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Stored User JSON from localStorage</h2>
+  <pre id="output">Loading...</pre>
+
+  <script>
+    const raw = localStorage.getItem('users');
+    const users = JSON.parse(raw) || [];
+    const formatted = JSON.stringify(users, null, 2);
+    document.getElementById('output').textContent = formatted;
+
+  </script>
+
+</body>
+</html>
