@@ -195,18 +195,18 @@
     
     .video-wrapper {
       position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
-      overflow: hidden;
+      width: 100%;
+      height: 400px; /* Fixed height instead of padding-bottom */
+      background: #000;
     }
     
-    .video-wrapper iframe {
+    .video-wrapper video {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      border: none;
+      object-fit: contain;
     }
     
     @keyframes fadeIn {
@@ -375,7 +375,7 @@ function generateVideoGrid() {
   });
 }
 
-// Open video in modal
+// Open video in modal - FIXED VERSION
 function openVideo(videoSrc, title) {
   const modal = document.getElementById('videoModal');
   const modalTitle = document.getElementById('modalTitle');
@@ -384,12 +384,15 @@ function openVideo(videoSrc, title) {
   // Set title
   modalTitle.textContent = title;
   
-  // Create video element for local files
+  // Create video element for local files with proper styling
   videoContainer.innerHTML = `
     <video 
       controls 
       autoplay 
-      style="width: 100%; height: 100%;"
+      muted
+      width="100%" 
+      height="400"
+      style="width: 100%; height: 400px; background: #000;"
       preload="metadata">
       <source src="${videoSrc}" type="video/mp4">
       Your browser does not support the video tag.
@@ -399,6 +402,18 @@ function openVideo(videoSrc, title) {
   // Show modal
   modal.style.display = 'block';
   document.body.style.overflow = 'hidden';
+  
+  // Try to play the video after a short delay
+  setTimeout(() => {
+    const video = videoContainer.querySelector('video');
+    if (video) {
+      video.play().catch(error => {
+        console.log("Autoplay failed, user interaction required");
+        // Remove muted attribute so user can play with sound
+        video.muted = false;
+      });
+    }
+  }, 100);
 }
 
 // Close modal
