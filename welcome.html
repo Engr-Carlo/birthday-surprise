@@ -48,48 +48,59 @@
   <div class="floating-hearts"></div>
 
   <script>
-    // Forever Yours: scatter 30 images as cards with smooth animation
-    document.getElementById('foreverBtn').onclick = function() {
-      // Remove previous scatter if any
-      document.querySelectorAll('.scattered-card').forEach(e => e.remove());
+// Preload images for faster display
+const preloadedImages = [];
+for(let i=1; i<=30; i++) {
+  const img = new Image();
+  img.src = `photos/photo${i}.jpg`;
+  preloadedImages.push(img);
+}
 
-      for(let i=1; i<=30; i++) {
-        const card = document.createElement('div');
-        card.className = 'scattered-card';
-        // Start from center, animate to random position
-        card.style.left = '50vw';
-        card.style.top = '50vh';
-        card.style.transform = `rotate(0deg) scale(0.7)`;
-        card.style.opacity = '0';
+// Forever Yours: scatter 30 images as cards with smooth animation
+document.getElementById('foreverBtn').onclick = function() {
+  // Remove previous scatter if any
+  document.querySelectorAll('.scattered-card').forEach(e => e.remove());
 
-        const img = document.createElement('img');
-        img.src = `photos/photo${i}.jpg`;
-        img.alt = `Memory ${i}`;
-        img.className = 'scattered-img';
-        card.appendChild(img);
+  for(let i=1; i<=30; i++) {
+    const card = document.createElement('div');
+    card.className = 'scattered-card';
+    // Start from center, animate to random position
+    card.style.left = '50vw';
+    card.style.top = '50vh';
+    card.style.transform = `rotate(0deg) scale(0.7)`;
+    card.style.opacity = '0';
 
-        document.body.appendChild(card);
+    const img = document.createElement('img');
+    // Use preloaded image source for instant display
+    img.src = preloadedImages[i-1].src;
+    img.alt = `Memory ${i}`;
+    img.className = 'scattered-img';
+    // Force immediate load
+    img.style.display = 'block';
+    card.appendChild(img);
 
-        // Animate to random position after a short delay
-        setTimeout(() => {
-          card.style.transition = 'all 1.2s cubic-bezier(.17,.67,.83,.67)';
-          card.style.left = Math.random() * 80 + 'vw';
-          card.style.top = Math.random() * 80 + 'vh';
-          card.style.transform = `rotate(${Math.random()*40-20}deg) scale(${0.9 + Math.random()*0.4})`;
-          card.style.opacity = '1';
-        }, 50 * i);
-      }
+    document.body.appendChild(card);
 
-      // Remove scattered cards after 2.5 seconds
-      setTimeout(() => {
-        document.querySelectorAll('.scattered-card').forEach(e => e.remove());
-      }, 15000);
-    };
+    // Animate to random position with reduced delay for faster start
+    setTimeout(() => {
+      card.style.transition = 'all 1.2s cubic-bezier(.17,.67,.83,.67)';
+      card.style.left = Math.random() * 80 + 'vw';
+      card.style.top = Math.random() * 80 + 'vh';
+      card.style.transform = `rotate(${Math.random()*40-20}deg) scale(${0.9 + Math.random()*0.4})`;
+      card.style.opacity = '1';
+    }, 20 * i); // Reduced from 50ms to 20ms for faster sequence
+  }
 
-    // Smooth scroll to "Our Story" page
-    document.getElementById('storyBtn').onclick = function() {
-      window.location.href = "our-story.html";
-    };
+  // Remove scattered cards after 15 seconds
+  setTimeout(() => {
+    document.querySelectorAll('.scattered-card').forEach(e => e.remove());
+  }, 15000);
+};
+
+// Smooth scroll to "Our Story" page
+document.getElementById('storyBtn').onclick = function() {
+  window.location.href = "our-story.html";
+};
   </script>
   <style>
     .heart-burst {
