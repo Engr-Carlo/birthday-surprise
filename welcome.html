@@ -88,13 +88,13 @@ document.getElementById('foreverBtn').onclick = function() {
       card.style.top = Math.random() * 80 + 'vh';
       card.style.transform = `rotate(${Math.random()*40-20}deg) scale(${0.9 + Math.random()*0.4})`;
       card.style.opacity = '1';
-    }, 20 * i); // Reduced from 50ms to 20ms for faster sequence
+    }, 40 * i); // Reduced from 50ms to 20ms for faster sequence
   }
 
   // Remove scattered cards after 15 seconds
   setTimeout(() => {
     document.querySelectorAll('.scattered-card').forEach(e => e.remove());
-  }, 15000);
+  }, 8000);
 };
 
 // Smooth scroll to "Our Story" page
