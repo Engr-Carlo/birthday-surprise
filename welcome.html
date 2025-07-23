@@ -48,20 +48,26 @@
   <div class="floating-hearts"></div>
 
   <script>
-// Preload images for faster display
+// Preload images for faster display with smaller sizes
 const preloadedImages = [];
 for(let i=1; i<=30; i++) {
   const img = new Image();
   img.src = `photos/photo${i}.jpg`;
+  // Set smaller dimensions to reduce memory usage
+  img.width = 110;
+  img.height = 110;
   preloadedImages.push(img);
 }
 
-// Forever Yours: scatter 30 images as cards with smooth animation
+// Forever Yours: optimized scatter animation for lower-end devices
 document.getElementById('foreverBtn').onclick = function() {
   // Remove previous scatter if any
   document.querySelectorAll('.scattered-card').forEach(e => e.remove());
 
-  for(let i=1; i<=30; i++) {
+  // Reduce number of cards for performance (20 instead of 30)
+  const cardCount = window.innerWidth < 768 ? 15 : 20; // Even fewer on mobile
+  
+  for(let i=1; i<=cardCount; i++) {
     const card = document.createElement('div');
     card.className = 'scattered-card';
     // Start from center, animate to random position
@@ -69,32 +75,40 @@ document.getElementById('foreverBtn').onclick = function() {
     card.style.top = '50vh';
     card.style.transform = `rotate(0deg) scale(0.7)`;
     card.style.opacity = '0';
+    card.style.willChange = 'transform, opacity'; // Optimize for animations
 
     const img = document.createElement('img');
     // Use preloaded image source for instant display
     img.src = preloadedImages[i-1].src;
     img.alt = `Memory ${i}`;
     img.className = 'scattered-img';
-    // Force immediate load
-    img.style.display = 'block';
+    // Add loading optimization
+    img.loading = 'eager';
+    img.decoding = 'sync';
     card.appendChild(img);
 
     document.body.appendChild(card);
 
-    // Animate to random position with reduced delay for faster start
+    // Animate to random position with staggered timing
     setTimeout(() => {
-      card.style.transition = 'all 1.2s cubic-bezier(.17,.67,.83,.67)';
-      card.style.left = Math.random() * 80 + 'vw';
-      card.style.top = Math.random() * 80 + 'vh';
-      card.style.transform = `rotate(${Math.random()*40-20}deg) scale(${0.9 + Math.random()*0.4})`;
+      // Use transform3d for hardware acceleration
+      card.style.transition = 'all 0.8s ease-out'; // Reduced from 1.2s
+      card.style.left = Math.random() * 70 + 15 + 'vw'; // Keep cards more centered
+      card.style.top = Math.random() * 70 + 15 + 'vh';
+      card.style.transform = `translate3d(0,0,0) rotate(${Math.random()*30-15}deg) scale(${0.9 + Math.random()*0.2})`;
       card.style.opacity = '1';
-    }, 40 * i); // Reduced from 50ms to 20ms for faster sequence
+      card.style.willChange = 'auto'; // Remove after animation
+    }, 30 * i); // Slightly reduced delay
   }
 
-  // Remove scattered cards after 15 seconds
+  // Remove scattered cards after 6 seconds (reduced)
   setTimeout(() => {
-    document.querySelectorAll('.scattered-card').forEach(e => e.remove());
-  }, 8000);
+    document.querySelectorAll('.scattered-card').forEach(e => {
+      e.style.transition = 'opacity 0.3s ease-out';
+      e.style.opacity = '0';
+      setTimeout(() => e.remove(), 300);
+    });
+  }, 6000);
 };
 
 // Smooth scroll to "Our Story" page
@@ -102,6 +116,7 @@ document.getElementById('storyBtn').onclick = function() {
   window.location.href = "our-story.html";
 };
   </script>
+
   <style>
     .heart-burst {
       position: fixed;
@@ -112,6 +127,7 @@ document.getElementById('storyBtn').onclick = function() {
       width: 0;
       height: 0;
     }
+    
     .burst-heart {
       position: absolute;
       width: 32px;
@@ -121,6 +137,7 @@ document.getElementById('storyBtn').onclick = function() {
       opacity: 0.8;
       animation: burst 1s cubic-bezier(.17,.67,.83,.67) forwards;
     }
+    
     .burst-heart:before, .burst-heart:after {
       content: "";
       position: absolute;
@@ -132,36 +149,61 @@ document.getElementById('storyBtn').onclick = function() {
       border-radius: 14px 14px 0 0;
       transform: rotate(-45deg);
     }
+    
     .burst-heart:after {
       left: 0;
       transform: rotate(45deg);
     }
+    
     @keyframes burst {
       0% { transform: scale(0.7) translateY(0); opacity: 0.8;}
       60% { transform: scale(1.2) translateY(-60px); opacity: 1;}
       100% { transform: scale(0.8) translateY(-120px); opacity: 0;}
     }
+    
     .scattered-card {
       position: fixed;
       z-index: 9999;
-      width: 110px;
-      height: 110px;
+      width: 100px; /* Reduced from 110px */
+      height: 100px;
       pointer-events: none;
-      animation: scatter-in 1.2s cubic-bezier(.17,.67,.83,.67) forwards;
       opacity: 0.95;
+      /* Hardware acceleration */
+      transform: translate3d(0,0,0);
+      backface-visibility: hidden;
     }
+    
     .scattered-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 14px;
-      box-shadow: 0 2px 12px rgba(215,38,96,0.18);
+      border-radius: 12px; /* Reduced from 14px */
+      box-shadow: 0 2px 8px rgba(215,38,96,0.15); /* Lighter shadow */
       border: 2px solid #fff;
+      /* Image optimization */
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
-    @keyframes scatter-in {
-      0% { opacity: 0; transform: scale(0.5) rotate(0deg);}
-      60% { opacity: 1; }
-      100% { opacity: 0.95;}
+    
+    /* Reduce animations on mobile */
+    @media (max-width: 768px) {
+      .scattered-card {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .scattered-img {
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(215,38,96,0.1);
+      }
+    }
+    
+    /* Disable animations on very low-end devices */
+    @media (prefers-reduced-motion: reduce) {
+      .scattered-card {
+        transition: none !important;
+        animation: none !important;
+      }
     }
   </style>
 </body>
