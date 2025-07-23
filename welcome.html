@@ -48,67 +48,122 @@
   <div class="floating-hearts"></div>
 
   <script>
-// Preload images for faster display with smaller sizes
+// Preload only 15 images with optimized loading
 const preloadedImages = [];
-for(let i=1; i<=30; i++) {
+for(let i=1; i<=15; i++) {
   const img = new Image();
   img.src = `photos/photo${i}.jpg`;
-  // Set smaller dimensions to reduce memory usage
-  img.width = 110;
-  img.height = 110;
+  // Smaller dimensions for better performance
+  img.width = 80;
+  img.height = 80;
   preloadedImages.push(img);
 }
 
-// Forever Yours: optimized scatter animation for lower-end devices
+// Forever Yours: ultra-smooth scatter animation
 document.getElementById('foreverBtn').onclick = function() {
   // Remove previous scatter if any
   document.querySelectorAll('.scattered-card').forEach(e => e.remove());
 
-  // Reduce number of cards for performance (20 instead of 30)
-  const cardCount = window.innerWidth < 768 ? 15 : 20; // Even fewer on mobile
+  // Use only 15 cards, even fewer on mobile
+  const cardCount = window.innerWidth < 768 ? 10 : 15;
   
-  for(let i=1; i<=cardCount; i++) {
+  // Use requestAnimationFrame for smoother animations
+  let currentCard = 0;
+  
+  function createNextCard() {
+    if (currentCard >= cardCount) return;
+    
+    const i = currentCard + 1;
     const card = document.createElement('div');
     card.className = 'scattered-card';
-    // Start from center, animate to random position
+    
+    // Start from center
     card.style.left = '50vw';
     card.style.top = '50vh';
-    card.style.transform = `rotate(0deg) scale(0.7)`;
+    card.style.transform = `translate(-50%, -50%) rotate(0deg) scale(0.5)`;
     card.style.opacity = '0';
-    card.style.willChange = 'transform, opacity'; // Optimize for animations
-
+    
     const img = document.createElement('img');
-    // Use preloaded image source for instant display
-    img.src = preloadedImages[i-1].src;
+    img.src = preloadedImages[currentCard].src;
     img.alt = `Memory ${i}`;
     img.className = 'scattered-img';
-    // Add loading optimization
     img.loading = 'eager';
     img.decoding = 'sync';
     card.appendChild(img);
 
     document.body.appendChild(card);
 
-    // Animate to random position with staggered timing
-    setTimeout(() => {
-      // Use transform3d for hardware acceleration
-      card.style.transition = 'all 0.8s ease-out'; // Reduced from 1.2s
-      card.style.left = Math.random() * 70 + 15 + 'vw'; // Keep cards more centered
-      card.style.top = Math.random() * 70 + 15 + 'vh';
-      card.style.transform = `translate3d(0,0,0) rotate(${Math.random()*30-15}deg) scale(${0.9 + Math.random()*0.2})`;
-      card.style.opacity = '1';
-      card.style.willChange = 'auto'; // Remove after animation
-    }, 30 * i); // Slightly reduced delay
-  }
+    // Store final position for exit animation
+    const finalX = Math.random() * 60 + 20; // 20-80vw
+    const finalY = Math.random() * 60 + 20; // 20-80vh
+    const finalRotate = Math.random() * 24 - 12; // -12 to 12 degrees
+    const finalScale = 0.85 + Math.random() * 0.2; // 0.85 to 1.05
+    
+    card.dataset.finalX = finalX;
+    card.dataset.finalY = finalY;
+    card.dataset.finalRotate = finalRotate;
+    card.dataset.finalScale = finalScale;
 
-  // Remove scattered cards after 6 seconds (reduced)
-  setTimeout(() => {
-    document.querySelectorAll('.scattered-card').forEach(e => {
-      e.style.transition = 'opacity 0.3s ease-out';
-      e.style.opacity = '0';
-      setTimeout(() => e.remove(), 300);
+    // Animate with requestAnimationFrame for smoothness
+    requestAnimationFrame(() => {
+      card.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      
+      card.style.left = finalX + 'vw';
+      card.style.top = finalY + 'vh';
+      card.style.transform = `translate(-50%, -50%) rotate(${finalRotate}deg) scale(${finalScale})`;
+      card.style.opacity = '0.95';
     });
-  }, 6000);
+
+    currentCard++;
+    
+    // Create next card with shorter delay
+    if (currentCard < cardCount) {
+      setTimeout(createNextCard, 80); // Reduced from 150ms
+    }
+  }
+  
+  // Start creating cards
+  createNextCard();
+
+  // Smooth exit animation after 4 seconds
+  setTimeout(() => {
+    document.querySelectorAll('.scattered-card').forEach((card, index) => {
+      setTimeout(() => {
+        // Get current position
+        const currentX = parseFloat(card.dataset.finalX);
+        const currentY = parseFloat(card.dataset.finalY);
+        const currentRotate = parseFloat(card.dataset.finalRotate);
+        
+        // Calculate exit direction (move away from center)
+        const centerX = 50;
+        const centerY = 50;
+        const directionX = currentX - centerX;
+        const directionY = currentY - centerY;
+        
+        // Calculate exit position (outside viewport)
+        let exitX, exitY;
+        if (Math.abs(directionX) > Math.abs(directionY)) {
+          // Exit horizontally
+          exitX = directionX > 0 ? 120 : -20; // Right or left edge
+          exitY = currentY + (directionY * 0.5); // Slight vertical movement
+        } else {
+          // Exit vertically
+          exitX = currentX + (directionX * 0.5); // Slight horizontal movement
+          exitY = directionY > 0 ? 120 : -20; // Bottom or top edge
+        }
+        
+        // Apply smooth exit animation
+        card.style.transition = 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        card.style.left = exitX + 'vw';
+        card.style.top = exitY + 'vh';
+        card.style.transform = `translate(-50%, -50%) rotate(${currentRotate + (Math.random() * 180 - 90)}deg) scale(0.3)`;
+        card.style.opacity = '0';
+        
+        // Remove after animation completes
+        setTimeout(() => card.remove(), 1000);
+      }, index * 30); // Staggered exit
+    });
+  }, 4000);
 };
 
 // Smooth scroll to "Our Story" page
@@ -118,83 +173,57 @@ document.getElementById('storyBtn').onclick = function() {
   </script>
 
   <style>
-    .heart-burst {
-      position: fixed;
-      left: 50%;
-      top: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      width: 0;
-      height: 0;
-    }
-    
-    .burst-heart {
-      position: absolute;
-      width: 32px;
-      height: 32px;
-      background: transparent;
-      transform: scale(0.7);
-      opacity: 0.8;
-      animation: burst 1s cubic-bezier(.17,.67,.83,.67) forwards;
-    }
-    
-    .burst-heart:before, .burst-heart:after {
-      content: "";
-      position: absolute;
-      left: 14px;
-      top: 0;
-      width: 14px;
-      height: 24px;
-      background: #d72660;
-      border-radius: 14px 14px 0 0;
-      transform: rotate(-45deg);
-    }
-    
-    .burst-heart:after {
-      left: 0;
-      transform: rotate(45deg);
-    }
-    
-    @keyframes burst {
-      0% { transform: scale(0.7) translateY(0); opacity: 0.8;}
-      60% { transform: scale(1.2) translateY(-60px); opacity: 1;}
-      100% { transform: scale(0.8) translateY(-120px); opacity: 0;}
-    }
-    
     .scattered-card {
       position: fixed;
       z-index: 9999;
-      width: 100px; /* Reduced from 110px */
-      height: 100px;
+      width: 90px; /* Smaller size */
+      height: 90px;
       pointer-events: none;
-      opacity: 0.95;
-      /* Hardware acceleration */
+      opacity: 0;
+      /* Maximum hardware acceleration */
       transform: translate3d(0,0,0);
       backface-visibility: hidden;
+      will-change: transform, opacity;
+      contain: layout style paint;
     }
     
     .scattered-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 12px; /* Reduced from 14px */
-      box-shadow: 0 2px 8px rgba(215,38,96,0.15); /* Lighter shadow */
-      border: 2px solid #fff;
-      /* Image optimization */
-      image-rendering: -webkit-optimize-contrast;
-      image-rendering: crisp-edges;
+      border-radius: 8px; /* Smaller radius */
+      box-shadow: 0 1px 4px rgba(215,38,96,0.2); /* Minimal shadow */
+      border: 1.5px solid #fff; /* Thinner border */
+      /* Optimized rendering */
+      image-rendering: optimizeSpeed;
+      transform: translateZ(0); /* Force hardware acceleration */
     }
     
-    /* Reduce animations on mobile */
+    /* Mobile optimizations */
     @media (max-width: 768px) {
       .scattered-card {
-        width: 80px;
-        height: 80px;
+        width: 70px;
+        height: 70px;
       }
       
       .scattered-img {
-        border-radius: 8px;
-        box-shadow: 0 1px 4px rgba(215,38,96,0.1);
+        border-radius: 6px;
+        box-shadow: 0 1px 2px rgba(215,38,96,0.15);
+        border: 1px solid #fff;
+      }
+    }
+    
+    /* Performance mode for low-end devices */
+    @media (max-width: 480px) {
+      .scattered-card {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .scattered-img {
+        border-radius: 4px;
+        box-shadow: none;
+        border: none;
       }
     }
     
@@ -205,6 +234,8 @@ document.getElementById('storyBtn').onclick = function() {
         animation: none !important;
       }
     }
+
+    /* Remove unused heart burst styles to reduce CSS size */
   </style>
 </body>
 </html>
