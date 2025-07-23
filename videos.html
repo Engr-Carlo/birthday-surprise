@@ -229,6 +229,172 @@
         margin: 10% auto;
       }
     }
+    
+    /* Featured Video Section */
+    .featured-section {
+      margin-bottom: 60px;
+      text-align: center;
+    }
+
+    .featured-label {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.2em;
+      color: #d72660;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .featured-label::before,
+    .featured-label::after {
+      content: "✨";
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8em;
+      animation: sparkle 2s infinite alternate;
+    }
+
+    .featured-label::before {
+      left: -40px;
+    }
+
+    .featured-label::after {
+      right: -40px;
+    }
+
+    @keyframes sparkle {
+      0% { opacity: 0.5; transform: translateY(-50%) scale(0.8); }
+      100% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+    }
+
+    .featured-video-card {
+      background: linear-gradient(145deg, #fff 0%, #fdf2f8 100%);
+      border-radius: 25px;
+      box-shadow: 0 15px 50px rgba(215,38,96,0.2);
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+      border: 3px solid #ff6b9d;
+      position: relative;
+    }
+
+    .featured-video-card::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #d72660, #ff6b9d, #ffb6c1, #d72660);
+      background-size: 400% 400%;
+      border-radius: 25px;
+      z-index: -1;
+      animation: gradientBorder 3s ease infinite;
+    }
+
+    @keyframes gradientBorder {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .featured-video-wrapper {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      background: #000;
+      border-radius: 22px 22px 0 0;
+      overflow: hidden;
+    }
+
+    .featured-video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(90deg, #d72660, #ff6b9d);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: bold;
+      z-index: 10;
+      box-shadow: 0 4px 15px rgba(215,38,96,0.4);
+    }
+
+    .featured-info {
+      padding: 30px;
+      text-align: center;
+      background: linear-gradient(145deg, #fff 0%, #fdf2f8 100%);
+    }
+
+    .featured-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.5em;
+      color: #d72660;
+      margin: 0 0 10px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .featured-description {
+      color: #666;
+      font-size: 1.1em;
+      margin-bottom: 15px;
+    }
+
+    .featured-hearts {
+      font-size: 1.5em;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Regular video grid title */
+    .regular-videos-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.5em;
+      color: #d72660;
+      text-align: center;
+      margin: 40px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Simple Featured Video Section */
+    .featured-section {
+      margin-bottom: 60px;
+      text-align: center;
+    }
+
+    .featured-video-simple {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      height: 500px;
+      background: #000;
+      margin: 0 auto;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .featured-video-simple iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
   </style>
 </head>
 <body>
@@ -249,8 +415,17 @@
   <div class="video-container">
     <h1 class="page-title">Our Love Story Videos 💕</h1>
     
+    <!-- Featured Video Section - Simple Rectangle -->
+    <div class="featured-section">
+      <div class="featured-video-simple" id="featuredVideoContainer">
+        <!-- Featured video will be loaded here -->
+      </div>
+    </div>
+
+    <!-- Regular Videos Grid -->
+    <h2 class="regular-videos-title">More Beautiful Memories</h2>
     <div class="video-grid" id="videoGrid">
-      <!-- Videos will be generated here -->
+      <!-- Other videos will be generated here -->
     </div>
   </div>
 
@@ -268,20 +443,29 @@
   </div>
 
   <script>
-// Video data - using Streamable
+// Video data - updated with your featured video
 const videos = [
   {
-    src: "https://streamable.com/ifgpig", // Replace with your actual video IDs
-    title: "Moments of the Heart",
-    description: "Our most precious memories together",
-    thumbnail: "thumbnail/thumb1.jpg"
+    src: "https://streamable.com/nicbl0",
+    title: "Featured Video",
+    description: "Featured Video",
+    thumbnail: "thumbnail/thumb1.jpg",
+    featured: true // Mark this as the featured video
   },
   {
     src: "https://streamable.com/u9h1yn",
+    title: "Moments of the Heart", 
+    description: "Our special moment",
+    thumbnail: "thumbnail/thumb1.jpg"
+  },
+
+    {
+    src: "https://streamable.com/ifgpig",
     title: "Timeless Memories", 
     description: "Every second with you is magical",
     thumbnail: "thumbnail/thumb2.jpg"
   },
+
   {
     src: "https://streamable.com/ymruag",
     title: "Whispers of Love",
@@ -289,7 +473,7 @@ const videos = [
     thumbnail: "thumbnail/thumb3.jpg"
   },
   {
-    src: "https://streamable.com/yya40u",
+    src: "https://streamable.com/jmkxmv",
     title: "Cherished Glimpses",
     description: "Beautiful moments we've shared",
     thumbnail: "thumbnail/thumb4.jpg"
@@ -343,18 +527,39 @@ const videos = [
     thumbnail: "thumbnail/thumb12.jpg"
   },
   {
-    src: "https://streamable.com/hcgkh83",
+    src: "https://streamable.com/hcgkh8",
     title: "Forever Yours",
     description: "Until the end of time",
     thumbnail: "thumbnail/thumb13.jpg"
   }
 ];
 
-// Generate video grid
+// Load featured video on page load - simplified
+function loadFeaturedVideo() {
+  const featuredVideo = videos.find(video => video.featured);
+  if (featuredVideo) {
+    const featuredContainer = document.getElementById('featuredVideoContainer');
+    
+    // Extract video ID and create simple autoplay iframe
+    const videoId = featuredVideo.src.split('/').pop();
+    featuredContainer.innerHTML = `
+      <iframe 
+        src="https://streamable.com/e/${videoId}?autoplay=1&muted=0" 
+        width="100%" 
+        height="500"
+        frameborder="0" 
+        allowfullscreen 
+        allow="autoplay; fullscreen">
+      </iframe>
+    `;
+  }
+}
+
+// Generate regular video grid (excluding featured video)
 function generateVideoGrid() {
   const grid = document.getElementById('videoGrid');
   
-  videos.forEach((video, index) => {
+  videos.filter(video => !video.featured).forEach((video, index) => {
     const videoCard = document.createElement('div');
     videoCard.className = 'video-card';
     videoCard.innerHTML = `
@@ -435,6 +640,7 @@ document.addEventListener('keydown', function(event) {
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
+  loadFeaturedVideo();
   generateVideoGrid();
 });
   </script>
